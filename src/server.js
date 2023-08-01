@@ -140,7 +140,7 @@ const init = async () => {
       if (!response.isServer) {
         return h.continue;
       }
-      console.log(response);
+      // console.log(response);
       const new_Response = h.response({
         status: "error",
         message: "bagian server",
