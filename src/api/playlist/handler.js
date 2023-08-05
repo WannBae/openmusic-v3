@@ -1,4 +1,7 @@
-const autoBind = require("auto-bind");
+/* eslint-disable quotes */
+/* eslint-disable no-underscore-dangle */
+
+const autoBind = require('auto-bind');
 
 class PlaylistHandler {
   constructor(service, validator) {
@@ -7,7 +10,7 @@ class PlaylistHandler {
     autoBind(this);
   }
 
-  //activity handler
+  // activity handler
   async getActivitiesHandler(request) {
     const { id: playlistId } = request.params;
     const { id: userId } = request.auth.credentials;
@@ -15,7 +18,7 @@ class PlaylistHandler {
     await this._service.verifyPlaylistOwner(playlistId, userId);
     const activities = await this._service.getActivities(playlistId);
     return {
-      status: "success",
+      status: 'success',
       data: {
         playlistId,
         activities,
@@ -34,8 +37,8 @@ class PlaylistHandler {
     });
 
     const response = h.response({
-      status: "success",
-      message: "Playlist berhasil ditambahkan",
+      status: 'success',
+      message: 'Playlist berhasil ditambahkan',
       data: {
         playlistId,
       },
@@ -48,7 +51,7 @@ class PlaylistHandler {
     const { id: credentialId } = request.auth.credentials;
     const playlists = await this._service.getPlaylists(credentialId);
     const response = h.response({
-      status: "success",
+      status: 'success',
       data: {
         playlists,
       },
@@ -64,8 +67,8 @@ class PlaylistHandler {
     await this._service.verifyPlaylistOwner(playlistId, credentialId); // Fixed typo here
     await this._service.deletePlaylistById(playlistId);
     const response = h.response({
-      status: "success",
-      message: "Playlist berhasil dihapus",
+      status: 'success',
+      message: 'Playlist berhasil dihapus',
     });
     response.code(200); // Fixed response code here
     return response;
@@ -85,8 +88,8 @@ class PlaylistHandler {
     await this._service.addSongToPlaylist(playlistId, songId, credentialId);
 
     const response = h.response({
-      status: "success",
-      message: "Lagu berhasil ditambahkan pada playlist",
+      status: 'success',
+      message: 'Lagu berhasil ditambahkan pada playlist',
     });
     response.code(201);
     return response;
@@ -99,15 +102,15 @@ class PlaylistHandler {
 
     const playlist = await this._service.getPlaylistWithId(id);
     const response = h.response({
-      status: "success",
+      status: 'success',
       data: {
-        playlist: playlist,
+        playlist,
       },
     });
     return h.response(response);
   }
 
-  async deleteSongPlaylistHandler(request, h) {
+  async deleteSongPlaylistHandler(request) {
     this._validator.validatePlaylistSongPayload(request.payload);
     const { id: playlistId } = request.params;
     const { id: credentialId } = request.auth.credentials;
@@ -118,12 +121,12 @@ class PlaylistHandler {
     await this._service.deleteSongFromPlaylist(
       songId,
       playlistId,
-      credentialId
+      credentialId,
     );
 
     return {
-      status: "success",
-      message: "Lagu berhasil dihapus dari playlist",
+      status: 'success',
+      message: 'Lagu berhasil dihapus dari playlist',
     };
   }
 }

@@ -1,38 +1,38 @@
-require("dotenv").config();
+require('dotenv').config();
 
-const ClientError = require("./exceptions/ClientError");
-const Hapi = require("@hapi/hapi");
-const Jwt = require("@hapi/jwt");
+const Hapi = require('@hapi/hapi');
+const Jwt = require('@hapi/jwt');
+const ClientError = require('./exceptions/ClientError');
 //
-//Songs
-const songs = require("./api/songs");
-const SongsService = require("./services/postgres/SongsService");
-const SongsValidator = require("./validator/songs");
+// Songs
+const songs = require('./api/songs');
+const SongsService = require('./services/postgres/SongsService');
+const SongsValidator = require('./validator/songs');
 
-//Albums
-const albums = require("./api/albums");
-const AlbumsService = require("./services/postgres/AlbumService");
-const AlbumsValidator = require("./validator/albums");
-//Users
-const users = require("./api/users");
-const UsersService = require("./services/postgres/UsersService");
-const UsersValidator = require("./validator/users");
+// Albums
+const albums = require('./api/albums');
+const AlbumsService = require('./services/postgres/AlbumService');
+const AlbumsValidator = require('./validator/albums');
+// Users
+const users = require('./api/users');
+const UsersService = require('./services/postgres/UsersService');
+const UsersValidator = require('./validator/users');
 
-//authentications
-const authentications = require("./api/authentications");
-const AuthenticationsService = require("./services/postgres/AuthenticationsService");
-const TokenManager = require("./tokenize/TokenManager");
-const AuthenticationsValidator = require("./validator/authentications");
+// authentications
+const authentications = require('./api/authentications');
+const AuthenticationsService = require('./services/postgres/AuthenticationsService');
+const TokenManager = require('./tokenize/TokenManager');
+const AuthenticationsValidator = require('./validator/authentications');
 
-//collaborations
-const collaborations = require("./api/collaborations");
-const CollaborationsService = require("./services/postgres/CollaborationsService");
-const CollaborationsValidator = require("./validator/collaborations");
+// collaborations
+const collaborations = require('./api/collaborations');
+const CollaborationsService = require('./services/postgres/CollaborationsService');
+const CollaborationsValidator = require('./validator/collaborations');
 
-//Playlist
-const playlist = require("./api/playlist");
-const PlaylistService = require("./services/postgres/PlaylistService");
-const PlaylistsValidator = require("./validator/playlist");
+// Playlist
+const playlist = require('./api/playlist');
+const PlaylistService = require('./services/postgres/PlaylistService');
+const PlaylistsValidator = require('./validator/playlist');
 
 // // Activities
 // const activitiesService = require("./services/postgres/ActivitiesService");
@@ -50,7 +50,7 @@ const init = async () => {
     host: process.env.HOST,
     routes: {
       cors: {
-        origin: ["*"],
+        origin: ['*'],
       },
     },
   });
@@ -61,7 +61,7 @@ const init = async () => {
     },
   ]);
 
-  server.auth.strategy("openmusic_jwt", "jwt", {
+  server.auth.strategy('openmusic_jwt', 'jwt', {
     keys: process.env.ACCESS_TOKEN_KEY,
     verify: {
       aud: false,
@@ -126,12 +126,12 @@ const init = async () => {
     },
   ]);
 
-  server.ext("onPreResponse", (request, h) => {
+  server.ext('onPreResponse', (request, h) => {
     const { response } = request;
     if (response instanceof Error) {
       if (response instanceof ClientError) {
         const new_Response = h.response({
-          status: "fail",
+          status: 'fail',
           message: response.message,
         });
         new_Response.code(response.statusCode);
@@ -142,8 +142,8 @@ const init = async () => {
       }
       // console.log(response);
       const new_Response = h.response({
-        status: "error",
-        message: "bagian server",
+        status: 'error',
+        message: 'bagian server',
       });
       new_Response.code(500);
       return new_Response;

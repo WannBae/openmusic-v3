@@ -3,7 +3,7 @@ const PlaylistModel = (playlist, songs) => ({
     id: playlist.id,
     name: playlist.name,
     username: playlist.username,
-    songs: songs,
+    songs,
   },
 });
 

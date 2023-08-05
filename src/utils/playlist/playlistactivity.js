@@ -1,6 +1,6 @@
 const PlaylistActivityModel = (playlistId, activities) => ({
-  playlistId: playlistId,
-  activities: activities,
+  playlistId,
+  activities,
 });
 
 module.exports = PlaylistActivityModel;

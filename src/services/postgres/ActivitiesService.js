@@ -1,5 +1,8 @@
-const { nanoid } = require("nanoid");
-const { Pool } = require("pg");
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable quotes */
+/* eslint-disable no-underscore-dangle */
+const { nanoid } = require('nanoid');
+const { Pool } = require('pg');
 
 class ActivitiesService {
   constructor() {
@@ -14,7 +17,7 @@ class ActivitiesService {
     const query = {
       text: `INSERT INTO activities
           VALUES($1,$2,$3,$4,$5,$6)`,
-      values: [id, playlistId, songId, userId, "delete", time],
+      values: [id, playlistId, songId, userId, 'delete', time],
     };
     await this._pool.query(query);
   }
@@ -25,7 +28,7 @@ class ActivitiesService {
     const query = {
       text: `INSERT INTO activities
                  VALUES($1, $2, $3, $4, $5, $6)`,
-      values: [id, playlistId, songId, userId, "add", time],
+      values: [id, playlistId, songId, userId, 'add', time],
     };
     await this._pool.query(query);
   }

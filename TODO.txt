@@ -1,4 +1,0 @@
-TODO 
-
-//Kamu belum menambahkan foreign key constraint untuk songs.albumId terhadap albums.id.
-//Learn collaborations again

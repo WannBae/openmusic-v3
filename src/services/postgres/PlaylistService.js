@@ -1,8 +1,11 @@
-const { Pool } = require("pg");
-const { nanoid } = require("nanoid");
-const NotFoundError = require("../../exceptions/NotFoundError");
-const InvariantError = require("../../exceptions/InvariantError");
-const AuthorizationError = require("../../exceptions/AuthorizationError");
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable quotes */
+/* eslint-disable no-underscore-dangle */
+const { Pool } = require('pg');
+const { nanoid } = require('nanoid');
+const NotFoundError = require('../../exceptions/NotFoundError');
+const InvariantError = require('../../exceptions/InvariantError');
+const AuthorizationError = require('../../exceptions/AuthorizationError');
 
 class PlaylistService {
   constructor(collaborationsService) {
@@ -13,12 +16,12 @@ class PlaylistService {
   async addPlaylist({ name, owner }) {
     const id = `playlist-${nanoid(16)}`;
     const query = {
-      text: "INSERT INTO playlist VALUES ($1,$2,$3) RETURNING id",
+      text: 'INSERT INTO playlist VALUES ($1,$2,$3) RETURNING id',
       values: [id, name, owner],
     };
     const result = await this._pool.query(query);
     if (!result.rows.length) {
-      throw new InvariantError("Playlist gagal ditambahkan");
+      throw new InvariantError('Playlist gagal ditambahkan');
     }
     return result.rows[0].id;
   }
@@ -39,12 +42,12 @@ class PlaylistService {
 
   async deletePlaylistById(id) {
     const query = {
-      text: "DELETE FROM playlist WHERE id=$1 RETURNING id",
+      text: 'DELETE FROM playlist WHERE id=$1 RETURNING id',
       values: [id],
     };
     const result = await this._pool.query(query);
     if (!result.rows.length) {
-      throw new NotFoundError("Gagal menghapus, id tidak ditemukan");
+      throw new NotFoundError('Gagal menghapus, id tidak ditemukan');
     }
   }
 
@@ -55,29 +58,29 @@ class PlaylistService {
     const activitiesId = `Playlist-activities-${nanoid(16)}`;
 
     const query = {
-      text: `INSERT INTO playlistsongs VALUES($1, $2, $3) RETURNING id`,
+      text: 'INSERT INTO playlistsongs VALUES($1, $2, $3) RETURNING id',
       values: [id, playlistId, songId],
     };
 
     const activitiesQuery = {
-      text: `INSERT INTO activities VALUES ($1, $2, $3, $4, $5) RETURNING id`, // There's a closing parenthesis ")" at the end
-      values: [activitiesId, playlistId, songId, userId, "add"],
+      text: 'INSERT INTO activities VALUES ($1, $2, $3, $4, $5) RETURNING id', // There's a closing parenthesis ")" at the end
+      values: [activitiesId, playlistId, songId, userId, 'add'],
     };
 
     const resultPlaylist = await this._pool.query(query);
     const resultActivities = await this._pool.query(activitiesQuery);
 
     if (!resultPlaylist.rows.length) {
-      throw new InvariantError("Lagu gagal ditambahkan");
+      throw new InvariantError('Lagu gagal ditambahkan');
     }
     if (!resultActivities.rows.length) {
-      throw new InvariantError("Aktivitas gagal ditambahkan");
+      throw new InvariantError('Aktivitas gagal ditambahkan');
     }
   }
 
   async getPlaylistWithId(playlistId) {
     const queryPlaylist = {
-      text: "SELECT * FROM playlist WHERE id = $1",
+      text: 'SELECT * FROM playlist WHERE id = $1',
       values: [playlistId],
     };
 
@@ -100,7 +103,7 @@ class PlaylistService {
     const resultSongs = await this._pool.query(querySongs);
 
     if (!resultList.rows.length) {
-      throw new NotFoundError("Daftar tidak ditemukan");
+      throw new NotFoundError('Daftar tidak ditemukan');
     }
     return {
       id: resultList.rows[0].id,
@@ -119,18 +122,18 @@ class PlaylistService {
       values: [songId],
     };
     const ActivitiesQuery = {
-      text: `INSERT INTO activities VALUES ($1, $2, $3, $4, $5) RETURNING id`,
-      values: [activitiesId, playlistId, songId, userId, "delete"],
+      text: 'INSERT INTO activities VALUES ($1, $2, $3, $4, $5) RETURNING id',
+      values: [activitiesId, playlistId, songId, userId, 'delete'],
     };
 
     const result = await this._pool.query(query);
     const ActivitiesResult = await this._pool.query(ActivitiesQuery);
 
     if (!result.rows.length) {
-      throw new NotFoundError("Lagu gagal dihapus. Id tidak ditemukan");
+      throw new NotFoundError('Lagu gagal dihapus. Id tidak ditemukan');
     }
     if (!ActivitiesResult.rows.length) {
-      throw new NotFoundError("Aktivitas gagal dihapus. Id tidak ditemukan");
+      throw new NotFoundError('Aktivitas gagal dihapus. Id tidak ditemukan');
     }
   }
 
@@ -138,16 +141,16 @@ class PlaylistService {
 
   async verifyPlaylistOwner(playlistId, owner) {
     const query = {
-      text: "SELECT * FROM playlist WHERE id = $1",
+      text: 'SELECT * FROM playlist WHERE id = $1',
       values: [playlistId],
     };
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError("Playlist tidak ditemukan");
+      throw new NotFoundError('Playlist tidak ditemukan');
     }
     if (result.rows[0].owner !== owner) {
-      throw new AuthorizationError("Anda tidak berhak mengakses resource ini");
+      throw new AuthorizationError('Anda tidak berhak mengakses resource ini');
     }
   }
 
@@ -161,7 +164,7 @@ class PlaylistService {
       try {
         await this._collaborationsService.verifyCollaborator(
           playlistId,
-          userId
+          userId,
         );
       } catch {
         throw error;
@@ -182,22 +185,22 @@ class PlaylistService {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError("Playlist tidak ditemukan");
+      throw new NotFoundError('Playlist tidak ditemukan');
     }
 
     return result.rows;
   }
 
-  //verify untuk mengecek playlist
+  // verify untuk mengecek playlist
   async verifySongPlaylist(songId) {
     const query = {
-      text: "SELECT * FROM songs WHERE id = $1",
+      text: 'SELECT * FROM songs WHERE id = $1',
       values: [songId],
     };
     const result = await this._pool.query(query);
 
     if (result.rows.length === 0) {
-      throw new NotFoundError("Lagu belum terdaftar pada playlist");
+      throw new NotFoundError('Lagu belum terdaftar pada playlist');
     }
     return result.rows[0];
   }

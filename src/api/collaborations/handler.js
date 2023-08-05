@@ -1,4 +1,7 @@
-const autoBind = require("auto-bind");
+/* eslint-disable quotes */
+/* eslint-disable no-underscore-dangle */
+const autoBind = require('auto-bind');
+
 class CollaborationsHandlers {
   constructor(collaborationsService, playlistService, usersService, validator) {
     this._collaborationsService = collaborationsService;
@@ -19,12 +22,12 @@ class CollaborationsHandlers {
 
     const collaborationId = await this._collaborationsService.addCollaboration(
       playlistId,
-      userId
+      userId,
     );
 
     const response = h.response({
-      status: "success",
-      message: "Kolaborasi berhasil ditambahkan",
+      status: 'success',
+      message: 'Kolaborasi berhasil ditambahkan',
       data: {
         collaborationId,
       },
@@ -43,8 +46,8 @@ class CollaborationsHandlers {
     await this._collaborationsService.deleteCollaboration(playlistId, userId);
 
     return {
-      status: "success",
-      message: "Kolaborasi berhasil dihapus",
+      status: 'success',
+      message: 'Kolaborasi berhasil dihapus',
     };
   }
 }
