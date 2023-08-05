@@ -1,3 +1,4 @@
 /node_modules
 .prod.env
 .env
+.eslintrc.json
