@@ -1,56 +1,75 @@
-require('dotenv').config();
+require("dotenv").config();
 
-const Hapi = require('@hapi/hapi');
-const Jwt = require('@hapi/jwt');
-const ClientError = require('./exceptions/ClientError');
+const Hapi = require("@hapi/hapi");
+const Jwt = require("@hapi/jwt");
+const Inert = require("@hapi/inert");
+const path = require("path");
+const ClientError = require("./exceptions/ClientError");
 //
 // Songs
-const songs = require('./api/songs');
-const SongsService = require('./services/postgres/SongsService');
-const SongsValidator = require('./validator/songs');
+const songs = require("./api/songs");
+const SongsService = require("./services/postgres/SongsService");
+const SongsValidator = require("./validator/songs");
 
 // Albums
-const albums = require('./api/albums');
-const AlbumsService = require('./services/postgres/AlbumService');
-const AlbumsValidator = require('./validator/albums');
+const albums = require("./api/albums");
+const AlbumsService = require("./services/postgres/AlbumService");
+const AlbumsValidator = require("./validator/albums");
 // Users
-const users = require('./api/users');
-const UsersService = require('./services/postgres/UsersService');
-const UsersValidator = require('./validator/users');
+const users = require("./api/users");
+const UsersService = require("./services/postgres/UsersService");
+const UsersValidator = require("./validator/users");
 
 // authentications
-const authentications = require('./api/authentications');
-const AuthenticationsService = require('./services/postgres/AuthenticationsService');
-const TokenManager = require('./tokenize/TokenManager');
-const AuthenticationsValidator = require('./validator/authentications');
+const authentications = require("./api/authentications");
+const AuthenticationsService = require("./services/postgres/AuthenticationsService");
+const TokenManager = require("./tokenize/TokenManager");
+const AuthenticationsValidator = require("./validator/authentications");
 
 // collaborations
-const collaborations = require('./api/collaborations');
-const CollaborationsService = require('./services/postgres/CollaborationsService');
-const CollaborationsValidator = require('./validator/collaborations');
+const collaborations = require("./api/collaborations");
+const CollaborationsService = require("./services/postgres/CollaborationsService");
+const CollaborationsValidator = require("./validator/collaborations");
 
 // Playlist
-const playlist = require('./api/playlist');
-const PlaylistService = require('./services/postgres/PlaylistService');
-const PlaylistsValidator = require('./validator/playlist');
+const playlist = require("./api/playlist");
+const PlaylistService = require("./services/postgres/PlaylistService");
+const PlaylistsValidator = require("./validator/playlist");
 
-// // Activities
-// const activitiesService = require("./services/postgres/ActivitiesService");
+//exports
+const _exports = require("./api/exports");
+const ProducerService = require("./services/rabbitmq/ProducerService");
+const ExportsValidator = require("./validator/exports");
+
+//uploads
+const uploads = require("./api/uploadsCover");
+const StorageService = require("./services/storage/StorageService");
+const UploadsValidator = require("./validator/uploads");
+
+//cache
+const CacheService = require("./services/redis/CacheService");
 
 const init = async () => {
+  const cacheService = new CacheService();
   const songsService = new SongsService();
   const albumsService = new AlbumsService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
-  const collaborationsService = new CollaborationsService();
-  const playlistService = new PlaylistService(collaborationsService);
+  const collaborationsService = new CollaborationsService(cacheService);
+  const playlistService = new PlaylistService(
+    collaborationsService,
+    cacheService
+  );
+  const storageService = new StorageService(
+    path.resolve(__dirname, "api/uploadsCover/file/pictures")
+  );
 
   const server = Hapi.server({
     port: process.env.PORT,
     host: process.env.HOST,
     routes: {
       cors: {
-        origin: ['*'],
+        origin: ["*"],
       },
     },
   });
@@ -59,9 +78,12 @@ const init = async () => {
     {
       plugin: Jwt,
     },
+    {
+      plugin: Inert,
+    },
   ]);
 
-  server.auth.strategy('openmusic_jwt', 'jwt', {
+  server.auth.strategy("openmusic_jwt", "jwt", {
     keys: process.env.ACCESS_TOKEN_KEY,
     verify: {
       aud: false,
@@ -124,14 +146,29 @@ const init = async () => {
         validator: CollaborationsValidator,
       },
     },
+    {
+      plugin: _exports,
+      options: {
+        service: ProducerService,
+        validator: ExportsValidator,
+        playlistService,
+      },
+    },
+    {
+      plugin: uploads,
+      options: {
+        service: storageService,
+        validator: UploadsValidator,
+      },
+    },
   ]);
 
-  server.ext('onPreResponse', (request, h) => {
+  server.ext("onPreResponse", (request, h) => {
     const { response } = request;
     if (response instanceof Error) {
       if (response instanceof ClientError) {
         const new_Response = h.response({
-          status: 'fail',
+          status: "fail",
           message: response.message,
         });
         new_Response.code(response.statusCode);
@@ -140,10 +177,10 @@ const init = async () => {
       if (!response.isServer) {
         return h.continue;
       }
-      // console.log(response);
+      console.log(response);
       const new_Response = h.response({
-        status: 'error',
-        message: 'bagian server',
+        status: "error",
+        message: "bagian server",
       });
       new_Response.code(500);
       return new_Response;
