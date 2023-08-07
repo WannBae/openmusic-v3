@@ -1,6 +1,6 @@
 /* eslint-disable quotes */
 /* eslint-disable no-underscore-dangle */
-const autoBind = require('auto-bind');
+const autoBind = require("auto-bind");
 
 class AlbumHandler {
   constructor(service, validator) {
@@ -11,11 +11,11 @@ class AlbumHandler {
 
   async postAlbumHandler(request, h) {
     this._validator.validateAlbumPayload(request.payload);
-    const { name = 'name', year } = request.payload;
+    const { name = "name", year } = request.payload;
     const albumId = await this._service.addAlbum({ name, year });
     const response = h.response({
-      status: 'success',
-      message: 'Album berhasil ditambahkan',
+      status: "success",
+      message: "Album berhasil ditambahkan",
       data: {
         albumId,
       },
@@ -27,7 +27,7 @@ class AlbumHandler {
   async getAlbumsHandler(h) {
     const albums = await this._service.getAlbums();
     const response = h.response({
-      status: 'success',
+      status: "success",
       data: {
         albums,
       },
@@ -42,27 +42,29 @@ class AlbumHandler {
 
     if (!album) {
       const response = h.response({
-        status: 'fail',
-        message: 'Album tidak ditemukan',
+        status: "fail",
+        message: "Album tidak ditemukan",
       });
       response.code(404);
       return response;
     }
 
-    const songs = await this._service.getSongsByAlbumId(id);
+    const songs = await this._service.getDataSong(id);
+    // const getDataAlbums = await this._service.getData(id);
 
     const response = h.response({
-      status: 'success',
+      status: "success",
       data: {
         album: {
           id: album.id,
           name: album.name,
           year: album.year,
-          songs: songs.map((song) => ({
-            id: song.id,
-            title: song.title,
-            performer: song.performer,
-          })),
+          coverUrl: album.cover_url,
+          // songs: songs.map((song) => ({
+          //   id: song.id,
+          //   title: song.title,
+          //   performer: song.performer,
+          // })),
         },
       },
     });
@@ -74,11 +76,11 @@ class AlbumHandler {
     const { id } = request.params;
     const { name, year } = request.payload;
 
-    if (typeof year !== 'number') {
+    if (typeof year !== "number") {
       const response = h
         .response({
-          status: 'fail',
-          message: 'Maaf, payload album tidak valid',
+          status: "fail",
+          message: "Maaf, payload album tidak valid",
         })
         .code(400);
       return response;
@@ -87,8 +89,8 @@ class AlbumHandler {
     await this._service.editAlbumById(id, { name, year });
 
     return {
-      status: 'success',
-      message: 'Album berhasil diperbarui',
+      status: "success",
+      message: "Album berhasil diperbarui",
     };
   }
 
@@ -96,8 +98,8 @@ class AlbumHandler {
     const { id } = request.params;
     await this._service.deleteAlbumById(id);
     return {
-      status: 'success',
-      message: 'Album berhasil dihapus',
+      status: "success",
+      message: "Album berhasil dihapus",
     };
   }
 }
