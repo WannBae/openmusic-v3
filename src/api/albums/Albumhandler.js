@@ -59,11 +59,11 @@ class AlbumHandler {
           name: album.name,
           year: album.year,
           coverUrl: album.cover_url,
-          // songs: songs.map((song) => ({
-          //   id: song.id,
-          //   title: song.title,
-          //   performer: song.performer,
-          // })),
+          songs: songs.map((song) => ({
+            id: song.id,
+            title: song.title,
+            performer: song.performer,
+          })),
         },
       },
     });
