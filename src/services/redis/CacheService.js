@@ -15,7 +15,7 @@ class CacheService {
     this._client.connect();
   }
 
-  async set(key, value, expirationInSecond = 3600) {
+  async set(key, value, expirationInSecond = 1800) {
     await this._client.set(key, value, {
       EX: expirationInSecond,
     });
@@ -32,17 +32,6 @@ class CacheService {
   delete(key) {
     return this._client.del(key);
   }
-
-  // delete(key) {
-  //   return new Promise((resolve, reject) => {
-  //     this._client.del(key, (error, count) => {
-  //       if (error) {
-  //         return reject(error);
-  //       }
-  //       return resolve(count);
-  //     });
-  //   });
-  // }
 }
 
 module.exports = CacheService;

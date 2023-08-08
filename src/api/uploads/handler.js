@@ -1,5 +1,3 @@
-const config = require("../../utils/config/config");
-
 class UploadsHandler {
   constructor(service, validator, albumService) {
     this._service = service;
@@ -13,10 +11,10 @@ class UploadsHandler {
     const { id } = request.params;
     this._validator.validateImageHeaders(cover.hapi.headers);
 
-    const fileLocation = await this._service.writeFile(cover, cover.hapi);
-    const coverUrl = `http://${config.app.host}:${config.app.port}/uploadsCover/pictures/${fileLocation}`;
+    const filename = await this._service.writeFile(cover, cover.hapi);
+    const coverUrl = `http://${process.env.HOST}:${process.env.PORT}/uploads/images/${filename}`;
 
-    await this._albumService.coverAlbumId(id, coverUrl);
+    await this._albumService.coverAlbumId(coverUrl, id);
 
     const response = h.response({
       status: "success",

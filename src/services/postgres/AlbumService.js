@@ -9,8 +9,9 @@ const InvariantError = require("../../exceptions/InvariantError");
 const { SongModel } = require("../../utils/songs");
 
 class AlbumServices {
-  constructor() {
+  constructor(cacheService) {
     this._pool = new Pool();
+    this._cacheService = cacheService;
   }
 
   async addAlbum({ name, year }) {
@@ -55,6 +56,7 @@ class AlbumServices {
     }
     return AlbumModel(result.rows[0]);
   }
+
   async getDataSong(id) {
     const query = {
       text: "SELECT id, title, performer FROM songs WHERE album_id=$1",
@@ -87,17 +89,45 @@ class AlbumServices {
     }
   }
 
-  async coverAlbumId(id, fileLocation) {
+  async coverAlbumId(coverUrl, id) {
     const query = {
       text: "UPDATE albums SET cover_url = $1 WHERE id = $2 RETURNING id",
-      values: [fileLocation, id],
+      values: [coverUrl, id],
     };
 
     const result = await this._pool.query(query);
     if (!result.rows.length) {
       throw new NotFoundError("Sampul gagal diperbarui. Id tidak ditemukan");
     }
-    // await this._cacheService.delete(`albums:${id}`);
+    await this._cacheService.delete(`album:${id}`);
+  }
+
+  async getAlbumLikeId(id) {
+    try {
+      const result = await this._cacheService.get(`albums:${id}`);
+      return {
+        result: JSON.parse(result),
+        cached: true,
+      };
+    } catch (error) {
+      const query = {
+        text: `SELECT albums.id as "album_id", albums.year as "album_year", albums.name as "album_name", albums.cover_url, songs.id, songs.title, songs.performer
+        FROM songs RIGHT JOIN albums ON songs.album_id = albums.id
+        WHERE albums.id = $1`,
+        values: [id],
+      };
+      const result = await this._pool.query(query);
+
+      if (!result.rows.length) {
+        throw new NotFoundError("Album tidak ditemukan");
+      }
+      await this._cacheService.set(`albums:${id}`, JSON.stringify(result));
+
+      return {
+        result,
+        cached: false,
+      };
+    }
   }
 }
 
