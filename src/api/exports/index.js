@@ -1,14 +1,15 @@
-const ExportsHandler = require("./handler");
-const routes = require("./routes");
+/* eslint-disable linebreak-style */
+const ExportsHandler = require('./handler');
+const routes = require('./routes');
 
 module.exports = {
-  name: "exports",
-  version: "1.0.0",
+  name: 'exports',
+  version: '1.0.0',
   register: async (server, { service, validator, playlistService }) => {
     const exportsHandler = new ExportsHandler(
       service,
       validator,
-      playlistService
+      playlistService,
     );
     server.route(routes(exportsHandler));
   },

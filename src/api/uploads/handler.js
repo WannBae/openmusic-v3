@@ -1,3 +1,5 @@
+/* eslint-disable linebreak-style */
+/* eslint-disable no-underscore-dangle */
 class UploadsHandler {
   constructor(service, validator, albumService) {
     this._service = service;
@@ -17,8 +19,8 @@ class UploadsHandler {
     await this._albumService.coverAlbumId(coverUrl, id);
 
     const response = h.response({
-      status: "success",
-      message: "Sampul berhasil diunggah",
+      status: 'success',
+      message: 'Sampul berhasil diunggah',
     });
     response.code(201);
     return response;

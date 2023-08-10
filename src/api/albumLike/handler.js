@@ -1,8 +1,9 @@
-/* eslint-disable require-jsdoc */
-const autoBind = require("auto-bind");
-
+/* eslint-disable linebreak-style */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable import/newline-after-import */
+const autoBind = require('auto-bind');
 class AlbumLikesHandler {
-  constructor(service, validator) {
+  constructor(service) {
     this._service = service;
 
     autoBind(this);
@@ -16,8 +17,8 @@ class AlbumLikesHandler {
     await this._service.addLikesToAlbum(id, credentialId);
 
     const response = h.response({
-      status: "success",
-      message: "Anda menyukai album ini",
+      status: 'success',
+      message: 'Anda menyukai album ini',
     });
     response.code(201);
     return response;
@@ -29,8 +30,8 @@ class AlbumLikesHandler {
 
     await this._service.deleteLike(id, credentialId);
     return {
-      status: "success",
-      message: "Berhasil membatalkan like",
+      status: 'success',
+      message: 'Berhasil membatalkan like',
     };
   }
 
@@ -38,13 +39,13 @@ class AlbumLikesHandler {
     const { id } = request.params;
     const { likes, cached } = await this._service.getAlbumLikes(id);
     const response = h.response({
-      status: "success",
+      status: 'success',
       data: {
         likes,
       },
     });
     if (cached) {
-      response.header("X-Data-Source", "cache");
+      response.header('X-Data-Source', 'cache');
     }
     return response;
   }

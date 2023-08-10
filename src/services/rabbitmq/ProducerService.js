@@ -1,4 +1,5 @@
-const amqp = require("amqplib");
+/* eslint-disable linebreak-style */
+const amqp = require('amqplib');
 
 const ProducerService = {
   sendMessage: async (queue, message) => {

@@ -1,10 +1,11 @@
+/* eslint-disable linebreak-style */
 const routes = (handler) => [
   {
-    method: "POST",
-    path: "/export/playlists/{playlistId}",
+    method: 'POST',
+    path: '/export/playlists/{playlistId}',
     handler: handler.postExportSongsHandler,
     options: {
-      auth: "openmusic_jwt",
+      auth: 'openmusic_jwt',
     },
   },
 ];

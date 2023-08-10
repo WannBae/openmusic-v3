@@ -1,5 +1,6 @@
-const InvariantError = require("../../exceptions/InvariantError");
-const { ImageHeadersSchema } = require("./schema");
+/* eslint-disable linebreak-style */
+const InvariantError = require('../../exceptions/InvariantError');
+const { ImageHeadersSchema } = require('./schema');
 
 const UploadsValidator = {
   validateImageHeaders: (headers) => {

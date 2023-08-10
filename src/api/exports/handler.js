@@ -1,3 +1,5 @@
+/* eslint-disable linebreak-style */
+/* eslint-disable no-underscore-dangle */
 class ExportsHandler {
   constructor(service, validator, playlistService) {
     this._service = service;
@@ -19,11 +21,11 @@ class ExportsHandler {
       targetEmail: request.payload.targetEmail,
     };
 
-    await this._service.sendMessage("export:playlist", JSON.stringify(message));
+    await this._service.sendMessage('export:playlist', JSON.stringify(message));
 
     const response = h.response({
-      status: "success",
-      message: "Permintaan Anda sedang kami proses",
+      status: 'success',
+      message: 'Permintaan Anda sedang kami proses',
     });
     response.code(201);
     return response;

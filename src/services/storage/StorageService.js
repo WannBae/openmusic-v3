@@ -1,4 +1,7 @@
-const fs = require("fs");
+/* eslint-disable linebreak-style */
+/* eslint-disable lines-between-class-members */
+/* eslint-disable no-underscore-dangle */
+const fs = require('fs');
 
 class StorageService {
   constructor(folder) {
@@ -15,9 +18,9 @@ class StorageService {
     const fileStream = fs.createWriteStream(path);
 
     return new Promise((resolve, reject) => {
-      fileStream.on("error", (error) => reject(error));
+      fileStream.on('error', (error) => reject(error));
       file.pipe(fileStream);
-      file.on("end", () => resolve(filename));
+      file.on('end', () => resolve(filename));
     });
   }
 }

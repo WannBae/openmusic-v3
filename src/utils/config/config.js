@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 const config = {
   app: {
     host: process.env.HOST,

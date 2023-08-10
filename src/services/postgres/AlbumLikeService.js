@@ -1,10 +1,11 @@
-/* eslint-disable max-len */
+/* eslint-disable linebreak-style */
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable require-jsdoc */
-const { nanoid } = require("nanoid");
-const { Pool } = require("pg");
-const InvariantError = require("../../exceptions/InvariantError");
-const NotFoundError = require("../../exceptions/NotFoundError");
-const ClientError = require("../../exceptions/ClientError");
+const { nanoid } = require('nanoid');
+const { Pool } = require('pg');
+const InvariantError = require('../../exceptions/InvariantError');
+const NotFoundError = require('../../exceptions/NotFoundError');
+const ClientError = require('../../exceptions/ClientError');
 
 class AlbumLikesService {
   constructor(albumService, cacheService) {
@@ -17,13 +18,13 @@ class AlbumLikesService {
     const id = `like-${nanoid(16)}`;
 
     const query = {
-      text: "INSERT INTO album_likes VALUES($1, $2, $3) RETURNING id",
+      text: 'INSERT INTO album_likes VALUES($1, $2, $3) RETURNING id',
       values: [id, userId, albumId],
     };
     const result = await this._pool.query(query);
 
     if (!result.rows[0].id) {
-      throw new InvariantError("Gagal menyukai album");
+      throw new InvariantError('Gagal menyukai album');
     }
 
     await this._cacheService.delete(`likes:${albumId}`);
@@ -39,19 +40,19 @@ class AlbumLikesService {
       };
     } catch (error) {
       const query = {
-        text: "SELECT * FROM album_likes WHERE album_id = $1",
+        text: 'SELECT * FROM album_likes WHERE album_id = $1',
         values: [albumId],
       };
 
       const result = await this._pool.query(query);
 
       if (!result.rowCount) {
-        throw new NotFoundError("Album tidak ditemukan");
+        throw new NotFoundError('Album tidak ditemukan');
       }
 
       await this._cacheService.set(
         `likes:${albumId}`,
-        JSON.stringify(result.rowCount)
+        JSON.stringify(result.rowCount),
       );
 
       return {
@@ -63,13 +64,13 @@ class AlbumLikesService {
 
   async deleteLike(albumId, userId) {
     const query = {
-      text: "DELETE FROM album_likes WHERE album_id = $1 AND user_id = $2",
+      text: 'DELETE FROM album_likes WHERE album_id = $1 AND user_id = $2',
       values: [albumId, userId],
     };
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new NotFoundError("Like gagal dihapus. Id tidak ditemukan");
+      throw new NotFoundError('Like gagal dihapus. Id tidak ditemukan');
     }
 
     await this._cacheService.delete(`likes:${albumId}`);
@@ -78,13 +79,13 @@ class AlbumLikesService {
   async verifyUserLiked(albumId, userId) {
     await this._albumService.getAlbumLikeId(albumId);
     const query = {
-      text: "SELECT * FROM album_likes WHERE album_id = $1 AND user_id = $2",
+      text: 'SELECT * FROM album_likes WHERE album_id = $1 AND user_id = $2',
       values: [albumId, userId],
     };
     const result = await this._pool.query(query);
 
     if (result.rowCount > 0) {
-      throw new ClientError("Anda sudah menyukai album ini");
+      throw new ClientError('Anda sudah menyukai album ini');
     }
   }
 }

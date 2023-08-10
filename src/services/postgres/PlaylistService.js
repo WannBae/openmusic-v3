@@ -1,3 +1,4 @@
+/* eslint-disable spaced-comment */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable quotes */
 /* eslint-disable no-underscore-dangle */
@@ -114,7 +115,7 @@ class PlaylistService {
       }
       await this._cacheService.set(
         `songs:${playlistId}`,
-        JSON.stringify(resultList, resultUser, resultSongs.rows)
+        JSON.stringify(resultList, resultUser, resultSongs.rows),
       );
       return {
         id: resultList.rows[0].id,
@@ -179,7 +180,7 @@ class PlaylistService {
       try {
         await this._collaborationsService.verifyCollaborator(
           playlistId,
-          userId
+          userId,
         );
       } catch {
         throw error;
